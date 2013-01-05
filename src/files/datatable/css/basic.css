@@ -1,7 +1,13 @@
-.example {
-	height: auto;
+#datatabledemo.loading {
+	background-image: url("http://lxmpro.com/cms/wp-content/uploads/2012/01/site-background-pattern-07.jpeg");
+	background-repeat: repeat-x;
+	color: white;
+	display: table-cell;
+	height: 200px;
+	text-align: center;
+	vertical-align: middle;
+	width: 700px;
 }
-
 
 .yui3-datatable {
 	border: solid 1px #CBCBCB;

@@ -1,132 +1,198 @@
-AUI().use('aui-datatable', 'datatable-sort', 'aui-datatype', function(A) {
+AUI().use('aui-datatable', 'aui-datatype', 'aui-loading-mask', 'aui-io-request', 'datatable-sort', function(A) {
 
-  window.nameEditor = new A.TextAreaCellEditor({
-    validator: {
-      rules: {
-        name: {
-          required: true,
-          email: true
-        }
-      }
-    }
-  });
+  var dataTableContainer = A.one('#datatabledemo');
 
-  window.fruitEditor = new A.DropDownCellEditor({
-    editable: true,
-    multiple: true,
-    validator: {
-      rules: {
-        value: {
-          required: true
-        }
-      }
-    },
-    options: {
-      apple: 'Apple',
-      cherry: 'Cherry',
-      banana: 'Banana',
-      kiwi: 'Kiwi'
-    }
-  });
+  var RealWorldExample = {
 
-  var nestedCols = [
-    {
-      key: 'name',
-      editor: nameEditor,
-      sortable: true
-    },
-    {
-      key: 'address',
-      editor: new A.TextAreaCellEditor(),
-      sortable: true
-    },
-    {
-      key: 'city',
-      editor: new A.TextAreaCellEditor()
-    },
-    {
-      key: 'state',
-      editor: new A.DropDownCellEditor({
-        editable: true,
-        options: states
-      })
-    },
-    {
-      key: 'amount',
-      editor: new A.TextCellEditor({
-        inputFormatter: A.DataType.String.evaluate,
-        validator: {
-          rules: {
-            value: {
-              required: true,
-              number: true
+    init: function() {
+
+      var createDataTable = this.createDataTable;
+      var createNestedColumns = this.createNestedColumns;
+
+      var loadingMask = this.createLoadingMask();
+
+      A.io.request(
+        'data/content.json',
+        {
+          on: {
+            success: function() {
+              var data = this.get('responseData');
+              var remoteContent = A.JSON.parse(data);
+
+              createDataTable(remoteContent, createNestedColumns);
+
+              loadingMask.hide();
+            },
+            failure: function() {
+              dataTableContainer.setContent('');
+
+              dataTableContainer.removeClass('loading');
+
+              dataTableContainer.addClass('load-failure');
             }
           }
         }
-      })
+      );
     },
-    {
-      key: 'active',
-      editor: new A.RadioCellEditor({
-        editable: true,
-        options: {
-          yes: 'Yes',
-          no: 'No',
-          maybe: 'Maybe'
+
+    createLoadingMask: function () {
+      var container = dataTableContainer.ancestor();
+
+      container.plug(A.LoadingMask);
+
+      var loadingmask = container.loadingmask;
+
+      loadingmask.show();
+
+      return loadingmask;
+
+      var overlay = new A.OverlayBase().plug(
+        A.LoadingMask,
+        {
+          background: '#000',
+          target: dataTableContainer
         }
-      })
+      ).render();
+
+      window.overlay = overlay;
+      window.loadingMask = overlay.loadingmask
+
+      return overlay.loadingmask;
     },
-    {
-      key: 'colors',
-      editor: new A.CheckboxCellEditor({
+
+    createNestedColumns: function(data) {
+      var validatorConfig = {
+        rules: {
+          name: {
+            required: true
+          }
+        }
+      };
+
+      var nameEditorConfig = {
+        validator: validatorConfig
+      };
+
+      var fruitEditorConfig = {
         editable: true,
         multiple: true,
+        validator: validatorConfig,
         options: {
-          red: 'Red',
-          green: 'Green',
-          blue: 'Blue'
+          apple: 'Apple',
+          cherry: 'Cherry',
+          banana: 'Banana',
+          kiwi: 'Kiwi'
         }
-      })
-    },
-    {
-      key: 'last_login',
-      editor: new A.DateCellEditor({
-        calendar: {
-          width:'250px',
-          showPrevMonth: false,
-          showNextMonth: false,
-          selectionMode: 'multiple',
-          dateFormat: '%m/%d/%Y'
+      };
+
+      var nestedColumns = [
+        {
+          key: 'name',
+          editor: new A.TextAreaCellEditor(nameEditorConfig),
+          sortable: true
         },
-        validator: {
-          rules: {
-            value: {
-              required: true
+        {
+          key: 'address',
+          editor: new A.TextAreaCellEditor(),
+          sortable: true
+        },
+        {
+          key: 'city',
+          editor: new A.TextAreaCellEditor()
+        },
+        {
+          key: 'state',
+          editor: new A.DropDownCellEditor({
+            editable: true,
+            options: data.states
+          })
+        },
+        {
+          key: 'amount',
+          editor: new A.TextCellEditor({
+            inputFormatter: A.DataType.String.evaluate,
+            validator: {
+              rules: {
+                value: {
+                  required: true,
+                  number: true
+                }
+              }
+            }
+          })
+        },
+        {
+          key: 'active',
+          editor: new A.RadioCellEditor({
+            editable: true,
+            options: {
+              yes: 'Yes',
+              no: 'No',
+              maybe: 'Maybe'
+            }
+          })
+        },
+        {
+          key: 'colors',
+          editor: new A.CheckboxCellEditor({
+            editable: true,
+            multiple: true,
+            options: {
+              red: 'Red',
+              green: 'Green',
+              blue: 'Blue'
+            }
+          })
+        },
+        {
+          key: 'last_login',
+          editor: new A.DateCellEditor({
+            calendar: {
+              width:'250px',
+              showPrevMonth: false,
+              showNextMonth: false,
+              selectionMode: 'multiple',
+              dateFormat: '%m/%d/%Y'
+            },
+            validator: validatorConfig
+          })
+        },
+        {
+          key: 'fruit',
+          editor: new A.TextAreaCellEditor(fruitEditorConfig)
+        }
+      ];
+
+      return nestedColumns;
+    },
+
+    createDataTable: function (data, createNestedColumns) {
+
+      new A.DataTable({
+        columns: createNestedColumns(data),
+        data: data.rows,
+        editEvent: 'dblclick',
+        plugins: [
+          {
+            fn: A.Plugin.DataTableHighlight,
+            cfg: {
+              highlightRange: false
             }
           }
+        ],
+        on: {
+          render: function(event) {
+            dataTableContainer.setContent('');
+
+            dataTableContainer.removeClass('loading');
+
+            this.get('boundingBox').unselectable();
+          }
         }
-      })
-    },
-    {
-      key: 'fruit',
-      editor: fruitEditor
+      }).render(dataTableContainer);
     }
-  ];
+  };
 
-  window.dtable = new A.DataTable({
-    columns: nestedCols,
-    data: remoteData,
-    editEvent: 'dblclick',
-    plugins: [
-      {
-        fn: A.Plugin.DataTableHighlight,
-        cfg: {
-          highlightRange: false
-        }
-      }
-    ]
-  }).render("#dt1");
-
-  dtable.get('boundingBox').unselectable();
+  RealWorldExample.init();
 
 });

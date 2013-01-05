@@ -9,7 +9,7 @@ tags: 'datatable'
 <h1>Data Table - Real World Example</h1>
 
 <div class="example">
-	<div id="dt1"></div>
+	<div id="datatabledemo" class="loading">demo will appear shortly</div>
 </div>
 
 <script id="snippet">

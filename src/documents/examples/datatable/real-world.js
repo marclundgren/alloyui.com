@@ -9,7 +9,7 @@ AUI().use('aui-datatable', 'aui-datatype', 'aui-loading-mask', 'aui-io-request',
       var createDataTable = this.createDataTable;
       var createNestedColumns = this.createNestedColumns;
 
-      var loadingMask = this.createLoadingMask();
+      var loadingMask = this.createLoadingMask(dataTableContainer);
 
       A.io.request(
         'data/content.json',
@@ -35,29 +35,12 @@ AUI().use('aui-datatable', 'aui-datatype', 'aui-loading-mask', 'aui-io-request',
       );
     },
 
-    createLoadingMask: function () {
-      var container = dataTableContainer.ancestor();
+    createLoadingMask: function(node) {
+      var nodeParent = node.ancestor();
 
-      container.plug(A.LoadingMask);
+      nodeParent.plug(A.LoadingMask);
 
-      var loadingmask = container.loadingmask;
-
-      loadingmask.show();
-
-      return loadingmask;
-
-      var overlay = new A.OverlayBase().plug(
-        A.LoadingMask,
-        {
-          background: '#000',
-          target: dataTableContainer
-        }
-      ).render();
-
-      window.overlay = overlay;
-      window.loadingMask = overlay.loadingmask
-
-      return overlay.loadingmask;
+      return nodeParent.loadingmask.show();
     },
 
     createNestedColumns: function(data) {
@@ -166,7 +149,7 @@ AUI().use('aui-datatable', 'aui-datatype', 'aui-loading-mask', 'aui-io-request',
       return nestedColumns;
     },
 
-    createDataTable: function (data, createNestedColumns) {
+    createDataTable: function(data, createNestedColumns) {
 
       new A.DataTable({
         columns: createNestedColumns(data),

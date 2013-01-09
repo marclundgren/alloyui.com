@@ -1,26 +1,19 @@
 AUI().use('aui-scheduler', function(A) {
-
   var events = [
     {
-      content: 'Soccer Game',
-      startDate: new Date(2012, 9, 10, 2),
-      endDate: new Date(2012, 9, 10, 6)
+      content: "Event1",
+      endDate: new Date(2012, 11, 11, 5),
+      startDate: new Date(2012, 11, 11, 1)
     }
-  ],
+  ];
 
-  dayView = new A.SchedulerDayView(),
-  monthView = new A.SchedulerMonthView(),
-  weekView = new A.SchedulerWeekView(),
+  var weekView = new A.SchedulerWeekView();
 
-  eventRecorder = new A.SchedulerEventRecorder(),
-
-  scheduler = new A.Scheduler({
-    boundingBox: '#scheduler',
-    date: new Date(2012, 9, 12),
-    eventRecorder: eventRecorder,
+  var scheduler = new A.Scheduler({
+    boundingBox: '#myScheduler',
+    date: new Date(2012, 11, 11),
     items: events,
     render: true,
-    views: [weekView, dayView, monthView]
+    views: [weekView]
   });
-
 });

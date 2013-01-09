@@ -1,17 +1,18 @@
 ---
-ignored: true
 title: Basic
 layout: single-example
 tags: 'scheduler'
 category: Scheduler
-thumbnail: http://alloyui.com/images/demo_images/paginator.png
-description: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+thumbnail: example-form-validator.jpg
+description: Allows users to toggle content on and off
 ---
 
-<link rel="stylesheet" href="<%= @site.url %>/scheduler/basic.css" type="text/css" />
+<link rel="stylesheet" href="assets/css/basic.css" type="text/css" />
 
-<h1>Scheduler - Basic Example</h1>
-<div id="scheduler"></div>
+<h1>Scheduler - Basic Sample</h1>
+<div id="wrapper">
+  <div id="myScheduler"></div>
+</div>
 
 <script id="snippet">
   <%- @readFile('basic.js', 'javascript') %>

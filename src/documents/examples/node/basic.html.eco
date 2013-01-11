@@ -11,9 +11,28 @@ description: Allows for interaction with the DOM
 
 <h1>Node - Basic Example</h1>
 
-<p>Click the <code>div</code> below to change its background color.</p>
+<p>Click the <code>buttons</code> below to see some node methods in action.</p>
 
-<div id="toggleColor">Click me!</div>
+<div id="demo">
+  <div id="contentHolder">
+    <div class="mini">
+      <p>The quick brown fox jumps over the lazy dog.</p>
+    </div>
+  </div>
+</div>
+
+
+<button id="populate">Create and Append</button>
+<button id="empty">Empty</button>
+<button id="toggle">Toggle</button>
+<button id="center">Center</button>
+<button id="select">Switch Selectability</button>
+
+<script type="text/javascript">
+  var text = 'The quick brown fox jumps over the lazy dog.';
+  var centered = false;
+  var selectable = true;
+</script>
 
 <script id="snippet">
   <%- @readFile('basic.js', 'javascript') %>

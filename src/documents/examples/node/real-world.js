@@ -1,13 +1,27 @@
 // Create an AUI instance and load the 'aui-node' module
 AUI().use('aui-node', function(A) {
 
-  // Select the node(s) using a css selector string
-  var nodes = A.all('.accordion .title');
+  var lastJobNumber = 1;
+  var newJobNumber = 2;
 
-  // Clicking a node will set it as exclusively `active`
-  nodes.on('click', function(event) {
-    nodes.removeClass('active');
+  A.one('#addJob').on('click', function() {
+    //Create a new Job node and give it an appropriate ID
+    var newJob = A.Node.create(job);
+    newJob.attr('id', 'job' + newJobNumber);
 
-    event.target.addClass('active');
+    //Place the node in its spot in the DOM and populate it
+    var lastJob = "#job" + lastJobNumber;
+    A.one(lastJob).placeAfter(newJob);
+    newJob.html(jobContent);
+
+    //Increment the values in case another job is added
+    lastJobNumber++;
+    newJobNumber++;
   });
+
+  A.one('#reset').on('click', function() {
+    //Reset the original number of fields when "Reset" is pressed
+    A.all('#jobForm .added').remove(true);
+  })
+
 });
